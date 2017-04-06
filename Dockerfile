@@ -3,6 +3,21 @@ MAINTAINER Citus Data https://citusdata.com
 
 ENV CITUS_VERSION 6.1.0.citus-1
 
+# build and install cstore_fdw
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates \
+       git \
+       gcc \
+       make \
+       protobuf-c-compiler \
+       libprotobuf-c0-dev \
+       libprotoc-dev \
+       postgresql-server-dev-9.6 \
+    && git clone https://github.com/citusdata/cstore_fdw /opt/cstore \
+    && cd /opt/cstore && make && make install \
+    && apt-get purge -y --auto-remove git gcc make
+
 # install Citus
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
