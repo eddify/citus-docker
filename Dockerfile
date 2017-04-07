@@ -28,11 +28,18 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove curl \
     && rm -rf /var/lib/apt/lists/*
 
+# install PostGIS
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+           postgresql-9.6-postgis-2.3 \
+           postgresql-9.6-postgis-2.3-scripts
+
 # add citus and cstore_fdw to default PostgreSQL config
 RUN echo "shared_preload_libraries='citus,cstore_fdw'" >> /usr/share/postgresql/postgresql.conf.sample
 
 # add scripts to run after initdb
-COPY 000-symlink-workerlist.sh 001-create-citus-extension.sql 002-create-cstore_fdw-extension.sql /docker-entrypoint-initdb.d/
+COPY 000-symlink-workerlist.sh 001-create-citus-extension.sql 002-create-cstore_fdw-extension.sql 003-create-postgis-extension.sql /docker-entrypoint-initdb.d/
 
 # add our wrapper entrypoint script
 COPY citus-entrypoint.sh /
