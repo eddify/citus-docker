@@ -4,11 +4,15 @@ services:
   master:
     container_name: 'citus_master'
     image: 'rafatower/citus:6.1.0'
+    build:
+      context: ./
     ports: ['5432:5432']
     labels: ['com.citusdata.role=Master']
     volumes: ['/var/run/postgresql']
   worker:
     image: 'rafatower/citus:6.1.0'
+    build:
+      context: ./
     labels: ['com.citusdata.role=Worker']
   config:
     container_name: 'citus_config'
